@@ -9,18 +9,19 @@ unsigned char decrypta[10][16],decryptb[10][16];
 int choicemem,mem;
 int rd[10];
 //int tatem,tbtem;
-string mst[11]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格夫","截短霰弹枪","匕首","宙斯电击枪"};
+string mst[11]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格夫","截短霰弹枪","加利尔AR","宙斯电击枪"};
 string skl[11]={"","lbw番茄连招","啸着玩","*打鸣*","跑 打","队友鲨手","甩狙","rushhhhhh","细节扔枪","A1高闪","自 鲨"};
-string act[]//这是行动操作
-
+string plc[7]={"","A点通道","中路门","匪家门口","B点拱门","A点平台","中路楼梯"};
+string act[21]={"","蹲在中路箱子背后",""};
 
 struct chara
 {
 	int acc;//精准度 
 	int hp;//血量
-	string skill;//技能,最多有1个 
+	int skill;//技能,最多有1个 
 	int mas;//专精 
 	int pos;//当前所在位置 
+	int weapon;//当前武器 
 }teama[10],teamb[10];
 
 void md5ed()
@@ -92,7 +93,7 @@ void attribute()
 		teama[i].mas=(rand())%11;
 		//cout<<mst[teama[i].mas]<<endl;
 //		cout<<tatem<<endl; 
-		teama[i].skill=skl[rand()%10+1];
+		teama[i].skill=rand()%10+1;
 			//cout<<teama[i].skill[j]<<endl;
 	}
     for(int i=1;i<=mem;i++)
@@ -110,7 +111,7 @@ void attribute()
 		teamb[i].mas=(rand())%11;
 		//cout<<mst[teamb[i].mas]<<endl;
 //		cout<<tbtem<<endl; 
-		teamb[i].skill=skl[rand()%10+1];
+		teamb[i].skill=rand()%10+1;
 		//cout<<teamb[i].skill[j]<<endl;	
 	}
 }
@@ -161,7 +162,7 @@ void debug_2()
     {
    		printf("-----------------------\n第%d个成员\n名称:%s\n精准:%d\nhp:%d\n专精:%s\n",j,sta[j],teama[j].acc,teama[j].hp,mst[teama[j].mas].data());
    		printf("技能:");
-   		printf("%s ",teama[j].skill.data());
+   		printf("%s ",skl[teama[j].skill].data());
    		printf("\n-----------------------\n");
 	}
 	setcolor(8);
@@ -171,7 +172,7 @@ void debug_2()
     {
    		printf("-----------------------\n第%d个成员\n名称:%s\n精准:%d\nhp:%d\n专精:%s\n",j,stb[j],teamb[j].acc,teama[j].hp,mst[teamb[j].mas].data());
    		printf("技能:");
-   		printf("%s ",teamb[j].skill.data());
+   		printf("%s ",skl[teamb[j].skill].data());
    		printf("\n-----------------------\n");
 	}
 	setcolor(5);
@@ -210,6 +211,32 @@ void strout()
 	printf("Game starting...\n");
 }
 
+void use_skill(chara a,bool team,int count)//count:第几个成员 team:属于哪个队伍 
+{
+	if(team==1)//B队 
+	{
+	printf("%s使用",stb[count]);
+	setcolor(8);
+	printf("%s",skl[a.skill].data());
+	setcolor(5);	
+	}
+	int rdplc=rand()%5+1;
+	switch(a.skill)
+	{
+		case 1:
+			printf(",大喊'番茄bs番茄炒B'冲向了%s\n",plc[rdplc].data());
+			break;
+		case 2:
+			printf(",\n",plc[rdplc].data());
+			break;
+	}	
+}
+
+void actt(chara a,bool team,int count,int rdmac)
+{
+	//
+}
+
 void game()
 {
 	cls();
@@ -221,12 +248,18 @@ void game()
 	while(flag)
 	{
 		count++;
-		int rdmc=rand()%mem+1;//随机一个成员
+		int rdmc=rand()%mem+1;
 		if(count%2==0)//偶数 team B 
 		{
-			switch()
+			switch(teamb[count].pos)
 			{
-				//这里还没写
+				case 1:
+					int rdmac=rand()%32+1;
+					if(rdmac==31)
+					use_skill(teamb[count],1,count);
+					else
+					actt(teamb[count],1,count,rdmac);
+					break;
 			}	
 		}
 	} 
