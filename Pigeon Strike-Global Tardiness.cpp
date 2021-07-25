@@ -9,22 +9,21 @@ unsigned char decrypta[10][16],decryptb[10][16];
 int choicemem,mem;
 int rd[10];
 //int tatem,tbtem;
-string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","ÄÚ¸ñ·ò","½Ø¶Ìö±µ¯Ç¹","¼ÓÀû¶ûAR","ÖæË¹µç»÷Ç¹","¸ñÂå¿Ë17"};
+string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","å†…æ ¼å¤«","æˆªçŸ­éœ°å¼¹æª","åŠ åˆ©å°”AR","å®™æ–¯ç”µå‡»æª","æ ¼æ´›å…‹17"};
 int sh[3][13]={{20,90,11,38,15,17,16,6,8,14,300,3},{38,210,30,70,33,31,35,100,110,34,400,18}};
 int bjl[13]={3,8,8,3,5,5,4,4,2,6,114,514};
-string skl[11]={"","lbw·¬ÇÑÁ¬ÕĞ","Ğ¥×ÅÍæ","*´òÃù*","ÅÜ ´ò","¶ÓÓÑöèÊÖ","Ë¦¾Ñ","rushhhhhh","Ï¸½ÚÈÓÇ¹","A1¸ßÉÁ","×Ô öè"};
-//string plc[7]={"","AµãÍ¨µÀ","ÖĞÂ·ÃÅ","·Ë¼ÒÃÅ¿Ú","Bµã¹°ÃÅ","AµãÆ½Ì¨","ÖĞÂ·Â¥Ìİ"};
-//string act[21]={"","ÅÜµ½ÁËÏä×ÓºóÃæ","ÍµÍµÉÏÁËÂ¥","ÆÁÏ¢ÄıÉñ,Ãé×¼ÁË",};
+string skl[11]={"","lbwç•ªèŒ„è¿æ‹›","å•¸ç€ç©","*æ‰“é¸£*","è·‘ æ‰“","é˜Ÿå‹é²¨æ‰‹","ç”©ç‹™","rushhhhhh","ç»†èŠ‚æ‰”æª","A1é«˜é—ª","è‡ª é²¨"};
 
 struct chara
 {
-	int acc;//¾«×¼¶È 
-	int hp;//ÑªÁ¿
-	int skill;//¼¼ÄÜ,×î¶àÓĞ1¸ö 
-	int mas;//×¨¾« 
-	int pos;//µ±Ç°ËùÔÚÎ»ÖÃ(¿ÕµØ1,Ïä×Ó2,Â¥ÉÏ3) 
-	int weapon=11;//µ±Ç°ÎäÆ÷ 
-	bool shm;//ÊÇ·ñÊ§Ã÷ 
+	int acc;//ç²¾å‡†åº¦ 
+	int hp;//è¡€é‡
+	int skill;//æŠ€èƒ½,æœ€å¤šæœ‰1ä¸ª 
+	int mas;//ä¸“ç²¾ 
+	int pos;//å½“å‰æ‰€åœ¨ä½ç½®(ç©ºåœ°1,ç®±å­2,æ¥¼ä¸Š3) 
+	int weapon=11;//å½“å‰æ­¦å™¨ 
+	bool shm;//æ˜¯å¦å¤±æ˜ 
+	int kill;//å‡»æ€æ•° 
 }teama[10],teamb[10];
 
 void md5ed()
@@ -74,15 +73,15 @@ void file_trans()
 	freopen("CON","r",stdin);
 //	cout<<dea[1]<<endl;
 //	cout<<deb[1];
-}//Õâ¸öÃ»Ğ´¹ø 
+}//è¿™ä¸ªæ²¡å†™é”… 
 
 void attribute()
 {
 	file_trans();
 	for(int i=1;i<=mem;i++) 
     {
-		//Team A ½øĞĞmd5·ÖÅäÊôĞÔ 
-		//½öÊ¹ÓÃ8Î»,Ã¿4Î»Ò»¸öÊôĞÔ 
+		//Team A è¿›è¡Œmd5åˆ†é…å±æ€§ 
+		//ä»…ä½¿ç”¨8ä½,æ¯4ä½ä¸€ä¸ªå±æ€§ 
 		for(int j=1;j<=2;j++)
 		{
 		rd[i]=(1+rand())%300;
@@ -101,7 +100,7 @@ void attribute()
 	}
     for(int i=1;i<=mem;i++)
     {
-		//Team B ½øĞĞmd5·ÖÅäÊôĞÔ 
+		//Team B è¿›è¡Œmd5åˆ†é…å±æ€§ 
 		for(int j=1;j<=2;j++)
 		{
 			rd[i]=(1+rand())%300;
@@ -125,13 +124,13 @@ void debug_1()
 	cout<<"Team A:\n";
     for(int j=1;j<=mem;j++)
     {
-   		printf("µÚ%d¸ö³ÉÔ±:¼ÓÃÜÇ°:%s\n¼ÓÃÜºó16Î»:",j,sta[j]);
+   		printf("ç¬¬%dä¸ªæˆå‘˜:åŠ å¯†å‰:%s\nåŠ å¯†å16ä½:",j,sta[j]);
     	for (i = 4; i<12; i++)
 		{
         	printf("%02x", decrypta[j][i]);
     	}	
     	cout<<"\n";	
-    	printf("¼ÓÃÜÇ°:%s\n¼ÓÃÜºó32Î»:",sta[j]);
+    	printf("åŠ å¯†å‰:%s\nåŠ å¯†å32ä½:",sta[j]);
     	for (i = 0; i<16; i++)
 		{
         	printf("%02x", decrypta[j][i]);
@@ -141,13 +140,13 @@ void debug_1()
 	cout<<"Team B:\n";
     for(int j=1;j<=mem;j++)
     {
-		printf("µÚ%d¸ö³ÉÔ±:¼ÓÃÜÇ°:%s\n¼ÓÃÜºó16Î»:",j,stb[j]);
+		printf("ç¬¬%dä¸ªæˆå‘˜:åŠ å¯†å‰:%s\nåŠ å¯†å16ä½:",j,stb[j]);
     	for (i = 4; i<12; i++)
 		{
         	printf("%02x", decryptb[j][i]);
     	}	
     	cout<<"\n";	
-		printf("¼ÓÃÜÇ°:%s\n¼ÓÃÜºó32Î»:",stb[j]);
+		printf("åŠ å¯†å‰:%s\nåŠ å¯†å32ä½:",stb[j]);
     	for (i = 0; i<16; i++)
 		{
         	printf("%02x", decryptb[j][i]);
@@ -163,8 +162,8 @@ void debug_2()
 	setcolor(3);
     for(int j=1;j<=mem;j++)
     {
-   		printf("-----------------------\nµÚ%d¸ö³ÉÔ±\nÃû³Æ:%s\n¾«×¼:%d\nhp:%d\n×¨¾«:%s\n",j,sta[j],teama[j].acc,teama[j].hp,mst[teama[j].mas].data());
-   		printf("¼¼ÄÜ:");
+   		printf("-----------------------\nç¬¬%dä¸ªæˆå‘˜\nåç§°:%s\nç²¾å‡†:%d\nhp:%d\nä¸“ç²¾:%s\n",j,sta[j],teama[j].acc,teama[j].hp,mst[teama[j].mas].data());
+   		printf("æŠ€èƒ½:");
    		printf("%s ",skl[teama[j].skill].data());
    		printf("\n-----------------------\n");
 	}
@@ -173,8 +172,8 @@ void debug_2()
 	setcolor(3);
     for(int j=1;j<=mem;j++)
     {
-   		printf("-----------------------\nµÚ%d¸ö³ÉÔ±\nÃû³Æ:%s\n¾«×¼:%d\nhp:%d\n×¨¾«:%s\n",j,stb[j],teamb[j].acc,teama[j].hp,mst[teamb[j].mas].data());
-   		printf("¼¼ÄÜ:");
+   		printf("-----------------------\nç¬¬%dä¸ªæˆå‘˜\nåç§°:%s\nç²¾å‡†:%d\nhp:%d\nä¸“ç²¾:%s\n",j,stb[j],teamb[j].acc,teama[j].hp,mst[teamb[j].mas].data());
+   		printf("æŠ€èƒ½:");
    		printf("%s ",skl[teamb[j].skill].data());
    		printf("\n-----------------------\n");
 	}
@@ -186,19 +185,19 @@ void strout()
 	setcolor(8);
 	cout<<"Welcome To <Pigeon Strike:Global Tardinness>.\n";
 	setcolor(5);
-	cout<<"ÇëÊäÈëÓÎÏ·Ä£Ê½:\n";
+	cout<<"è¯·è¾“å…¥æ¸¸æˆæ¨¡å¼:\n";
 	setcolor(4);
-	cout<<"1:1v1 ÖĞÃÅ¶Ô¾Ñ³¡\n2:3v3 ¿ìËÙ¶ÔÕ½³¡\n3:5v5 ±ê×¼³¡\n";
+	cout<<"1:1v1 ä¸­é—¨å¯¹ç‹™åœº\n2:3v3 å¿«é€Ÿå¯¹æˆ˜åœº\n3:5v5 æ ‡å‡†åœº\n";
 	setcolor(5);
 	cin>>choicemem;
 	mem=choicemem*2-1;
-	cout<<"ÇëÊäÈëA¶ÓÃû³Æ(ÓÃ¿Õ¸ñ»ò»»ĞĞ¸ô¿ª):\n";
+	cout<<"è¯·è¾“å…¥Aé˜Ÿåç§°(ç”¨ç©ºæ ¼æˆ–æ¢è¡Œéš”å¼€):\n";
 	for(int i=1;i<=mem;i++)
 	cin>>sta[i];
-	cout<<"ÇëÊäÈëB¶ÓÃû³Æ(ÓÃ¿Õ¸ñ»ò»»ĞĞ¸ô¿ª):\n";
+	cout<<"è¯·è¾“å…¥Bé˜Ÿåç§°(ç”¨ç©ºæ ¼æˆ–æ¢è¡Œéš”å¼€):\n";
 	for(int i=1;i<=mem;i++)
 	cin>>stb[i];
-	const int NUM=mem*2;//ÈÎÎñÍê³É×ÜÁ¿ È»¶øÎÒÏÔÊ¾¼ÓÔØÌõÖ®Ç°¾ÍÅªÍêÁË((( 
+	const int NUM=mem*2;//ä»»åŠ¡å®Œæˆæ€»é‡ ç„¶è€Œæˆ‘æ˜¾ç¤ºåŠ è½½æ¡ä¹‹å‰å°±å¼„å®Œäº†((( 
 	md5ed();
 	for (int i=0;i<=NUM;i++)
 	{
@@ -206,7 +205,7 @@ void strout()
 		setcolor(3);
 		else
 		setcolor(7);
-		printf("ÕıÔÚ×ª»»ÎªMD5:%.2lf%%\r",i*100.0/NUM);
+		printf("æ­£åœ¨è½¬æ¢ä¸ºMD5:%.2lf%%\r",i*100.0/NUM);
 		Sleep(150);
 	}
 	printf("\nTransformation Completed.\n");
@@ -214,35 +213,53 @@ void strout()
 	printf("Game starting...\n");
 }
 
-//void use_skill(chara a,bool team,int count)//count:µÚ¼¸¸ö³ÉÔ± team:ÊôÓÚÄÄ¸ö¶ÓÎé 
+//void use_skill(chara a,bool team,int count)//count:ç¬¬å‡ ä¸ªæˆå‘˜ team:å±äºå“ªä¸ªé˜Ÿä¼ 
 //{
-//	if(team==1)//B¶Ó 
+//	if(team==1)//Bé˜Ÿ 
 //	{
-//	printf("%sÊ¹ÓÃ",stb[count]);
+//	printf("%sä½¿ç”¨",stb[count]);
 //	setcolor(8);
 //	printf("%s",skl[a.skill].data());
 //	setcolor(5);	
 //	}
 //	int rdplc=rand()%5+1;
-//	//ÏÄÁèÏ«¸ºÔğ´¦ 
+//	//å¤å‡Œæ±è´Ÿè´£å¤„ 
 //}
-//Ã÷ÌìÔÙ×ö ½ñÍíÖ±½ÓÆÕÍ¨ĞĞ¶¯ 
+//æ˜å¤©å†åš ä»Šæ™šç›´æ¥æ™®é€šè¡ŒåŠ¨ 
 
 void actt(chara &a,bool team,int count,int rdmac)
 {
 	if(a.shm==1)
 	{
-		printf("-------------------------\n%sÒòÎªÕıÔÚÊ§Ã÷,ËùÒÔÌø¹ıÁË´Ë»ØºÏ\n",team?stb[count]:sta[count]);
 		a.shm=0;
-		return;
+		int rdmlkq=rand()%20+1; 
+		if(rdmlkq!=20)
+		{
+		printf("-------------------------\n%så› ä¸ºæ­£åœ¨å¤±æ˜,æ‰€ä»¥è·³è¿‡äº†æ­¤å›åˆ\n",team?stb[count]:sta[count]);
+		return;	
+		}
+		else
+		printf("-------------------------\n%sè™½ç„¶åˆšæ‰è¢«é—ªäº†,ä½†æ˜¯ç”¨ä»–è€ç‹—çš„æ„è¯†ç»§ç»­æ“ä½œ!\n",team?stb[count]:sta[count]);
 	}
 	rdmac%=5;
 	rdmac+=1;
 	int rdmst=rand()%mem+1;
+	if(team)
+	{
+		while(teama[rdmst].hp==0)
+		rdmst=rand()%mem+1;	
+	}
+	else
+	{
+		while(teamb[rdmst].hp==0)
+		rdmst=rand()%mem+1;	
+	}
 	int rdmsh=rand()%sh[1][a.weapon]+sh[0][a.weapon];
-	if(rdmsh%bjl[a.weapon]==0||(a.pos==3&&a.acc%bjl[a.weapon]==0))//2Â¥Éä»÷¿É¼Ó´ó±¬µÄ¼¸ÂÊ 
+	if(rdmsh%bjl[a.weapon]==0||(a.pos==3&&a.acc%bjl[a.weapon]==0))//2æ¥¼å°„å‡»å¯åŠ å¤§çˆ†çš„å‡ ç‡ 
 		rdmsh*=2;
-	if(rdmac==3||rdmac==4)
+	if(a.weapon==a.mas)
+	    rdmsh=rdmsh*2;
+	if(rdmac==3||rdmac==4||(rdmac==2&&a.pos==3))
 	{
 		if(team)
 		{
@@ -262,7 +279,7 @@ void actt(chara &a,bool team,int count,int rdmac)
 	switch(rdmac)
 	{
 		case 1:
-			printf("-------------------------\n%sÈÓÁË¸öÉÁ,%s±»ÉÁÏ¹ÁË\n",team?stb[count]:sta[count],team?sta[rdmst]:stb[rdmst]);
+			printf("-------------------------\n%sæ‰”äº†ä¸ªé—ª,%sè¢«é—ªçäº†\n",team?stb[count]:sta[count],team?sta[rdmst]:stb[rdmst]);
 			if(team) teama[rdmst].shm=1;
 			else
 			teamb[rdmst].shm=1;
@@ -270,46 +287,47 @@ void actt(chara &a,bool team,int count,int rdmac)
 		case 2:
 			if(a.pos==3)
 			{
-			setcolor(3);
-			printf("-------------------------\n%sÊ¹ÓÃ%sÉä»÷ÁË%s,Ôì³É%dµãÉËº¦,%sµ±Ç°ÑªÁ¿%d\n",team?stb[count]:sta[count],mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
-			setcolor(5);
+				setcolor(3);
+				printf("-------------------------\n%sä½¿ç”¨%så°„å‡»äº†%s,é€ æˆ%dç‚¹ä¼¤å®³,%så½“å‰è¡€é‡%d\n",team?stb[count]:sta[count],mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+				setcolor(5);
 			}
 			else
 			{
-			a.pos=3;
-			setcolor(3);
-			printf("-------------------------\n%sÆ­¹ıÉÏµÛ,Áïµ½ÁË2Â¥\n",team?stb[count]:sta[count]);
-			setcolor(5);	
+				a.pos=3;
+				setcolor(3);
+				printf("-------------------------\n%séª—è¿‡ä¸Šå¸,æºœåˆ°äº†2æ¥¼\n",team?stb[count]:sta[count]);
+				setcolor(5);	
 			}
 			break;
 		case 3:
 			setcolor(1);
-			printf("-------------------------\n%sÆÁÏ¢ÄıÉñ,Ãé×¼ÁË%s\n",team?stb[count]:sta[count],team?sta[rdmst]:stb[rdmst]);
-			printf("%sÊ¹ÓÃ%s¾«×¼Éä»÷ÁË%s,Ôì³É%dµãÉËº¦,%sµ±Ç°ÑªÁ¿%d\n",team?stb[count]:sta[count],mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+			printf("-------------------------\n%så±æ¯å‡ç¥,ç„å‡†äº†%s\n",team?stb[count]:sta[count],team?sta[rdmst]:stb[rdmst]);
+			printf("%sä½¿ç”¨%sç²¾å‡†å°„å‡»äº†%s,é€ æˆ%dç‚¹ä¼¤å®³,%så½“å‰è¡€é‡%d\n",team?stb[count]:sta[count],mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
 			setcolor(5);
 			break;
 		case 4:
 			setcolor(3);
-			printf("-------------------------\n%sÊ¹ÓÃ%sÉä»÷ÁË%s,Ôì³É%dµãÉËº¦,%sµ±Ç°ÑªÁ¿%d\n",team?stb[count]:sta[count],mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+			printf("-------------------------\n%sä½¿ç”¨%så°„å‡»äº†%s,é€ æˆ%dç‚¹ä¼¤å®³,%så½“å‰è¡€é‡%d\n",team?stb[count]:sta[count],mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
 			setcolor(5);
 			break;
 		case 5:
 			while(tempw==a.weapon)
 			a.weapon=rand()%12;
 			setcolor(4);
-			printf("-------------------------\n%sÆğÁË°Ñ%s,ÈÓµôÁËÊÖÖĞµÄ%s\n",team?stb[count]:sta[count],mst[a.weapon].data(),mst[tempw].data());
+			printf("-------------------------\n%sèµ·äº†æŠŠ%s,æ‰”æ‰äº†æ‰‹ä¸­çš„%s\n",team?stb[count]:sta[count],mst[a.weapon].data(),mst[tempw].data());
 			setcolor(5);
 			break;
 		default :
-			printf("-------------------------\n%s·¢ÁËÒ»»ØºÏ´ô,ÒòÎªËûÔÚË¼¿¼ÎªÊ²Ã´³ÌĞò»áËæ»úµ½²»¸ÃËæ»úµÄÊı×Ö%d\n",team?stb[count]:sta[count],rdmac);
+			printf("-------------------------\n%så‘äº†ä¸€å›åˆå‘†,å› ä¸ºä»–åœ¨æ€è€ƒä¸ºä»€ä¹ˆç¨‹åºä¼šéšæœºåˆ°ä¸è¯¥éšæœºçš„æ•°å­—%d\n",team?stb[count]:sta[count],rdmac);
 			break;
 	} 
 	if(team)
 	{
 	if(teama[rdmst].hp==0)
 	{
+		a.kill++;
 		setcolor(4);
-		printf("-------------------------\n%s±»%sÊ¹ÓÃ%sÉ±ËÀÁË.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+		printf("-------------------------\n%sè¢«%sä½¿ç”¨%sæ€æ­»äº†.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 		setcolor(5);
 	}	
 	}
@@ -317,8 +335,9 @@ void actt(chara &a,bool team,int count,int rdmac)
 	{
 	if(teamb[rdmst].hp==0)
 	{
+		a.kill++;
 		setcolor(4);
-		printf("-------------------------\n%s±»%sÊ¹ÓÃ%sÉ±ËÀÁË.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+		printf("-------------------------\n%sè¢«%sä½¿ç”¨%sæ€æ­»äº†.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 		setcolor(5);
 	}	
 	}
@@ -326,25 +345,40 @@ void actt(chara &a,bool team,int count,int rdmac)
 
 bool winner;
 
+void print_data()
+{
+	setcolor(1);
+	printf("----------\nTeam Aæˆ˜ç»©:\n----------\n");
+	setcolor(5);
+	for(register int i=1;i<=mem;i++)
+	printf("%s killed:%d\n",sta[i],teama[i].kill);
+	setcolor(2);
+	printf("----------\nTeam Bæˆ˜ç»©:\n----------\n");
+	setcolor(5);
+	for(register int i=1;i<=mem;i++)
+	printf("%s killed:%d\n",stb[i],teamb[i].kill);
+}
+
 void game()
 {
 	cls();
 	setcolor(4);
-	printf("ÓÎÏ·¿ªÊ¼\n");
+	printf("æ¸¸æˆå¼€å§‹\n");
 	setcolor(5);
-	bool flag=true;//Ê¤ÀûÌõ¼ş:ÓĞÒ»·½È«¹ÒÁË 
+	bool flag1=false;//èƒœåˆ©æ¡ä»¶:æœ‰ä¸€æ–¹å…¨æŒ‚äº† 
+	bool flag[10]={1,1,1,1,1,1,1,1,1,1};
 	int count=0;
 	int round=2;
-	while(flag)
+	while(!flag1)
 	{
 		round++;
 		int count=rand()%mem+1;
-		if(round%2==0)//Å¼Êı team B 
+		if(round%2==0)//å¶æ•° team B 
 		{
 			if(teamb[count].hp==0)
 			continue;
 			setcolor(8);
-			printf("ÂÖµ½Team BĞĞ¶¯:\n");
+			printf("è½®åˆ°Team Bè¡ŒåŠ¨:\n");
 			setcolor(5);
 			printf("==============\n");
 			Sleep(1000);
@@ -359,7 +393,7 @@ void game()
 			if(teama[count].hp==0)
 			continue;
 			setcolor(8);
-			printf("ÂÖµ½Team AĞĞ¶¯:\n");
+			printf("è½®åˆ°Team Aè¡ŒåŠ¨:\n");
 			setcolor(5);
 			printf("==============\n");
 			Sleep(1000);
@@ -370,11 +404,16 @@ void game()
 			actt(teama[count],0,count,rdmac);	
 		}
 		for(register int i=1;i<=mem;i++)
-		flag=(teama[i].hp)?1:0;
-		if(!flag)
+		flag[i]=(teama[i].hp)?1:0;
+		flag1=true;
+		for(register int i=1;i<=mem;i++)
+			if(flag[i]) flag1=false;
+		if(flag1)
 		{
 			winner=1;
 			printf("\nTeam B Wins!\n");
+			Sleep(3000);
+			print_data();
 			Sleep(3000);
 			system("pause");
 			return;
@@ -382,11 +421,16 @@ void game()
 		else
 		{
 			for(register int i=1;i<=mem;i++)
-			flag=(teamb[i].hp)?1:0;
-			if(!flag)
+			flag[i]=(teamb[i].hp)?1:0;
+			flag1=true;
+			for(register int i=1;i<=mem;i++)
+			if(flag[i]) flag1=false;
+			if(flag1)
 			{
 				winner=1;
 				printf("\nTeam A Wins!\n");
+				Sleep(3000);
+				print_data();
 				Sleep(3000);
 				system("pause");
 				return;
@@ -400,10 +444,10 @@ int main()
 {
 	srand(time(NULL));
     strout();
-    //debug_1();//Êä³ömd5Âë 
+    //debug_1();//è¾“å‡ºmd5ç  
     attribute();
     debug_2();
-    printf("(Çë¼ìÔÄÄúµÄ²¿¶Ó,Íê±ÏºóÊäÈëyes.)\n");
+    printf("(è¯·æ£€é˜…æ‚¨çš„éƒ¨é˜Ÿ,å®Œæ¯•åè¾“å…¥yes.)\n");
     string fuck="";
     cin>>fuck;
     game();
