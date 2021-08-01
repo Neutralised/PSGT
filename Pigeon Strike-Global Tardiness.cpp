@@ -10,7 +10,7 @@ int choicemem,mem;
 int rd[10];
 //int tatem,tbtem;
 string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格夫","截短霰弹枪","加利尔AR","宙斯电击枪","格洛克17"};
-int sh[3][13]={{20,90,11,38,15,17,16,6,8,14,300,3},{38,210,30,70,33,31,35,100,110,34,400,18}};
+int sh[3][13]={{20,90,11,38,15,17,16,6,8,14,300,5},{38,210,30,70,33,31,35,100,110,34,400,18}};
 int bjl[13]={3,8,8,3,5,5,4,4,2,6,114,514};
 string skl[11]={"","lbw番茄连招","啸着玩","*打鸣*","跑 打","队友鲨手","甩狙","rushhhhhh","细节扔枪","A1高闪","自 鲨"};
 
@@ -24,6 +24,7 @@ struct chara
 	int weapon=11;//当前武器 
 	bool shm;//是否失明 
 	int kill;//击杀数 
+	int extra;//额外伤害 
 }teama[10],teamb[10];
 
 void md5ed()
@@ -213,20 +214,207 @@ void strout()
 	printf("Game starting...\n");
 }
 
-//void use_skill(chara a,bool team,int count)//count:第几个成员 team:属于哪个队伍 
-//{
-//	if(team==1)//B队 
-//	{
-//	printf("%s使用",stb[count]);
-//	setcolor(8);
-//	printf("%s",skl[a.skill].data());
-//	setcolor(5);	
-//	}
-//	int rdplc=rand()%5+1;
-//	//夏凌汐负责处 
-//}
-//明天再做 今晚直接普通行动 
-
+void use_skill(chara &a,bool team,int count)//count:第几个成员 team:属于哪个队伍 
+{
+	if(a.shm==1)
+	{
+		a.shm=0;
+		int rdmlkq=rand()%20+1; 
+		if(rdmlkq!=20)
+		{
+		printf("-------------------------\n%s因为正在失明,所以跳过了此回合\n",team?stb[count]:sta[count]);
+		return;	
+		}
+		else
+		printf("-------------------------\n%s虽然刚才被闪了,但是用他老狗的意识继续操作!\n",team?stb[count]:sta[count]);
+	}
+	if(team==1)//B队 
+		printf("%s使用技能",stb[count]);
+	else
+		printf("%s使用技能",sta[count]);	
+	setcolor(8);
+	printf("%s",skl[a.skill].data());
+	setcolor(5);
+	printf(",");
+	int rdmst=rand()%mem+1;
+	if(team)
+	{
+		if(a.skill==5)
+		{
+			while(teamb[rdmst].hp==0)
+			rdmst=rand()%mem+1;	
+		}
+		else
+		{
+			while(teama[rdmst].hp==0)
+			rdmst=rand()%mem+1;	
+		}	
+	}
+	else
+	{
+		if(a.skill==5)
+		{
+			while(teama[rdmst].hp==0)
+			rdmst=rand()%mem+1;
+		}
+		else
+		{
+			while(teamb[rdmst].hp==0)
+			rdmst=rand()%mem+1;		
+		}
+	}
+	int rdmsh=rand()%sh[1][a.weapon]+sh[0][a.weapon];
+	if(rdmsh%bjl[a.weapon]==0||(a.pos==3&&a.acc%bjl[a.weapon]==0))//2楼射击可加大爆的几率 
+		rdmsh*=2;
+	if(a.weapon==a.mas)
+	    rdmsh=rdmsh*2;
+	if(a.skill==4)
+		rdmsh/=3;
+	if(a.skill==6)
+		rdmsh*=2;
+	rdmsh+=a.extra;
+	a.extra=0;
+	if(a.skill==2||a.skill==4||a.skill==5||a.skill==6||a.skill==7)
+	{
+		if(team)
+		{
+			if(a.skill==5)
+			{
+				teamb[rdmst].hp-=rdmsh;
+				if(teamb[rdmst].hp<=0)
+				teamb[rdmst].hp=0;
+			}
+			else
+			{
+				teama[rdmst].hp-=rdmsh;
+				if(teama[rdmst].hp<=0)
+				teama[rdmst].hp=0;	
+			}
+		}
+		else
+		{
+			if(a.skill==5)
+			{
+				teama[rdmst].hp-=rdmsh;
+				if(teama[rdmst].hp<=0)
+				teama[rdmst].hp=0;
+			}
+			else
+			{
+				teamb[rdmst].hp-=rdmsh;
+				if(teamb[rdmst].hp<=0)
+				teamb[rdmst].hp=0;	
+			}
+		}	
+	}
+	chara target;
+	if(a.skill!=5)
+	target=team?teama[rdmst]:teamb[rdmst];
+	else
+	target=team?teamb[rdmst]:teama[rdmst];
+//	int tempw=a.weapon;
+	switch(a.skill)
+	{
+		case 1:
+			rdmsh*=2;
+			setcolor(1); 
+			printf("大喊一声'番茄鼻s番茄炒b',下回合伤害+%d!\n",rdmsh);
+			setcolor(5);
+			a.extra=rdmsh;
+			break;
+		case 2:
+			setcolor(2);
+			printf("一边嚎叫一边用%s淦飞了%s,造成了%d点伤害,%s当前血量%d\n",mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+			setcolor(5);
+			break;
+		case 3:
+			printf("旁若无人地打起了鸣,诉说着被刀的血的教训......所以跳过本回合\n");
+			break;
+		case 4:
+			printf("学习CF玩家好榜样,用%s边跑边射%s,只打中了1/3的子弹,造成了%d点伤害,%s当前血量%d\n",mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+			break;
+		case 5:
+			printf("瞎稽疤乱射,手中的%s不受控制地射向了队友%s,造成了%d点伤害,%s当前血量%d\n",mst[a.weapon].data(),team?stb[rdmst]:sta[rdmst],rdmsh,team?stb[rdmst]:sta[rdmst],target.hp);
+			break;
+		case 6:
+			printf("抬起手中的%s信手一枪,甩到了%s脸上,让对方血条掉落%d,%s仅剩%d血量!\n",mst[a.weapon].data(),team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+			break;
+		case 7:
+			printf("仰天长啸'勇敢牛牛,不怕困难',rush了%s,对方血量减少%d,%s血量还剩%d\n",team?sta[rdmst]:stb[rdmst],rdmsh,team?sta[rdmst]:stb[rdmst],target.hp);
+			break;
+		case 8:
+			a.weapon=11;
+			printf("扔下了手中的%s,武器变回格洛克17,并双手过头行法国军礼\n",mst[a.weapon].data());
+			break;
+		case 9:
+			if(team)
+				for(register int i=1;i<=mem;i++)
+				teama[i].shm=1;
+			else
+				for(register int i=1;i<=mem;i++)
+				teamb[i].shm=1;
+			printf("甩出一枚睾级Flash Bomb,闪瞎了对面所有人!\n");
+			break;
+		case 10:
+			printf("以迅雷不及掩耳盗铃儿响叮当仁不让世界充满爱在西元前仆后继无人间失格物致知之为知之不知为不知是智障也的势头掏出一把小刀割开了自己的喉咙!\n");
+			setcolor(1);
+			printf("%s杀死了自己\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			a.hp=0; 
+			break;
+	}
+	if(a.skill!=10)
+	{
+		if(team)
+		{
+			if(a.skill!=5)
+			{
+				if(teama[rdmst].hp==0)
+				{
+					a.kill++;
+					setcolor(4);
+					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+					setcolor(5);
+				}	
+			}
+			else
+			{
+				if(teamb[rdmst].hp==0)
+				{
+					a.kill++;
+					setcolor(4);
+					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?stb[rdmst]:sta[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+					setcolor(5);
+				}	
+			}	
+		}
+		else
+		{
+			if(a.skill!=5)
+			{
+				if(teamb[rdmst].hp==0)
+				{
+					a.kill++;
+					setcolor(4);
+					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+					setcolor(5);
+				}	
+			}
+			else
+			{
+				if(teama[rdmst].hp==0)
+				{
+					a.kill++;
+					setcolor(4);
+					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?stb[rdmst]:sta[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+					setcolor(5);
+				}	
+			}	
+		}	
+	}
+}
+//肝! 
+//string skl[11]={"","lbw番茄连招","啸着玩","*打鸣*","跑 打","队友鲨手","甩狙","rushhhhhh","细节扔枪","A1高闪","自 鲨"};
 void actt(chara &a,bool team,int count,int rdmac)
 {
 	if(a.shm==1)
@@ -259,6 +447,8 @@ void actt(chara &a,bool team,int count,int rdmac)
 		rdmsh*=2;
 	if(a.weapon==a.mas)
 	    rdmsh=rdmsh*2;
+	rdmsh+=a.extra;
+	a.extra=0;
 	if(rdmac==3||rdmac==4||(rdmac==2&&a.pos==3))
 	{
 		if(team)
@@ -375,32 +565,32 @@ void game()
 		int count=rand()%mem+1;
 		if(round%2==0)//偶数 team B 
 		{
-			if(teamb[count].hp==0)
-			continue;
+			while(teamb[count].hp==0)
+			count++;
 			setcolor(8);
 			printf("轮到Team B行动:\n");
 			setcolor(5);
 			printf("==============\n");
 			Sleep(1000);
 			int rdmac=rand()%31+1;
-//			if(rdmac==31)
-//			use_skill(teamb[count],1,count);
-//			else
+			if(rdmac==31||rdmac==30||rdmac==29)
+			use_skill(teamb[count],1,count);
+			else
 			actt(teamb[count],1,count,rdmac);	
 		}
 		else
 		{
-			if(teama[count].hp==0)
-			continue;
+			while(teama[count].hp==0)
+			count++;
 			setcolor(8);
 			printf("轮到Team A行动:\n");
 			setcolor(5);
 			printf("==============\n");
 			Sleep(1000);
 			int rdmac=rand()%31+1;
-//			if(rdmac==31)
-//			use_skill(teama[count],0,count);
-//			else
+			if(rdmac==31||rdmac==30||rdmac==29)
+			use_skill(teama[count],0,count);
+			else
 			actt(teama[count],0,count,rdmac);	
 		}
 		for(register int i=1;i<=mem;i++)
