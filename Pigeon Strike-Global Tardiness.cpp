@@ -8,6 +8,7 @@ string dea[10],deb[10];
 unsigned char decrypta[10][16],decryptb[10][16];
 int choicemem,mem;
 int rd[10];
+int gamod=0;
 //int tatem,tbtem;
 string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格夫","截短霰弹枪","加利尔AR","宙斯电击枪","格洛克17"};
 int sh[3][13]={{20,90,11,38,15,17,16,6,8,14,300,5},{38,210,30,70,33,31,35,100,110,34,400,18}};
@@ -571,6 +572,7 @@ void game()
 			printf("轮到Team B行动:\n");
 			setcolor(5);
 			printf("==============\n");
+			if(!gamod)
 			Sleep(1000);
 			int rdmac=rand()%31+1;
 			if(rdmac==31||rdmac==30||rdmac==29)
@@ -586,6 +588,7 @@ void game()
 			printf("轮到Team A行动:\n");
 			setcolor(5);
 			printf("==============\n");
+			if(!gamod)
 			Sleep(1000);
 			int rdmac=rand()%31+1;
 			if(rdmac==31||rdmac==30||rdmac==29)
@@ -626,6 +629,7 @@ void game()
 				return;
 			}
 		}//Team A wins
+		if(!gamod)
 		Sleep(1500);
 	} 
 }
@@ -640,6 +644,15 @@ int main()
     printf("(请检阅您的部队,完毕后输入yes.)\n");
     string fuck="";
     cin>>fuck;
+    setcolor(4);
+    printf("您是否想打开快速战斗模式?(Y/N)\n");
+    setcolor(5);
+    string cccc;
+    cin>>cccc;
+    if(cccc=="Y")
+    gamod=1;
+    else
+    gamod=0;
     game();
     return 0;
 }
