@@ -567,7 +567,11 @@ void game()
 		if(round%2==0)//偶数 team B 
 		{
 			while(teamb[count].hp==0)
-			count++;
+			{
+				count++;	
+				if(count>mem)
+				count=1;
+			}
 			setcolor(8);
 			printf("轮到Team B行动:\n");
 			setcolor(5);
@@ -583,7 +587,11 @@ void game()
 		else
 		{
 			while(teama[count].hp==0)
-			count++;
+			{
+				count++;	
+				if(count>mem)
+				count=1;
+			}
 			setcolor(8);
 			printf("轮到Team A行动:\n");
 			setcolor(5);
