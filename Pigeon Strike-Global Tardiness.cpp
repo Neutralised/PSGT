@@ -514,23 +514,109 @@ void actt(chara &a,bool team,int count,int rdmac)
 	} 
 	if(team)
 	{
-	if(teama[rdmst].hp==0)
-	{
-		a.kill++;
-		setcolor(4);
-		printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
-		setcolor(5);
-	}	
+		if(teama[rdmst].hp==0)
+		{
+			a.kill++;
+			setcolor(4);
+			printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+			setcolor(5);
+		}
+		switch(a.kill)
+			{
+				case 2:
+					setcolor(2);
+					printf("%s已经带走了2人!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 3:
+					setcolor(1);
+					printf("%s鲨疯了!淦翻了3个人!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 4:
+					setcolor(4);
+					printf("%s如同天上降魔猪,真是世间野猪神!4个人已经倒在他脚下!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 5:
+					setcolor(6);
+					printf("王牌!%s鲨掉了5人!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 6:
+					setcolor(6);
+					printf("%s还在鲨戮!6人已死!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 7:
+					setcolor(6);
+					printf("这不可能...%s是吃了炫迈吗根本停不下来...\n7个人头入账!",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 8:
+					setcolor(6);
+					printf("第8个......怎么还是%s?!这b开挂了吧......\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 9:
+					setcolor(1);
+					printf("%s消灭了整支敌方队伍......\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+			}	
 	}
 	else
 	{
-	if(teamb[rdmst].hp==0)
-	{
-		a.kill++;
-		setcolor(4);
-		printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
-		setcolor(5);
-	}	
+		if(teamb[rdmst].hp==0)
+		{
+			a.kill++;
+			setcolor(4);
+			printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
+			setcolor(5);
+			switch(a.kill)
+			{
+				case 2:
+					setcolor(2);
+					printf("%s已经带走了2人!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 3:
+					setcolor(2);
+					printf("%s鲨疯了!淦翻了3个人!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 4:
+					setcolor(2);
+					printf("%s如同天上降魔猪,真是世间野猪神!4个人已经倒在他脚下!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 5:
+					setcolor(6);
+					printf("王牌!%s鲨掉了5人!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 6:
+					setcolor(6);
+					printf("%s还在鲨戮!6人已死!\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 7:
+					setcolor(6);
+					printf("这不可能...%s是吃了炫迈吗根本停不下来...\n7个人头入账!",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 8:
+					setcolor(6);
+					printf("第8个......怎么还是%s?!这b开挂了吧......\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+				case 9:
+					setcolor(1);
+					printf("%s消灭了整支敌方队伍......\n",team?stb[count]:sta[count]);
+					setcolor(5);
+					break;
+			}
+		}	
 	}
 }
 
@@ -548,6 +634,16 @@ void print_data()
 	setcolor(5);
 	for(register int i=1;i<=mem;i++)
 	printf("%s killed:%d\n",stb[i],teamb[i].kill);
+}
+
+void slinit()
+{
+	for(register int i=1;i<=mem;i++)
+	{
+		teamb[i].hp=teama[i].hp=200;
+		teama[i].kill=teamb[i].kill=0;
+		teama[i].weapon=teamb[i].weapon=11;	
+	}
 }
 
 void game()
@@ -613,10 +709,9 @@ void game()
 		{
 			winner=1;
 			printf("\nTeam B Wins!\n");
-			Sleep(3000);
+			Sleep(1000);
 			print_data();
-			Sleep(3000);
-			system("pause");
+			Sleep(1000);
 			return;
 		}//Team B Wins
 		else
@@ -630,10 +725,9 @@ void game()
 			{
 				winner=1;
 				printf("\nTeam A Wins!\n");
-				Sleep(3000);
+				Sleep(1000);
 				print_data();
-				Sleep(3000);
-				system("pause");
+				Sleep(1000);
 				return;
 			}
 		}//Team A wins
@@ -657,10 +751,17 @@ int main()
     setcolor(5);
     string cccc;
     cin>>cccc;
-    if(cccc=="Y")
+    if(cccc=="Y"||cccc=="Yes"||cccc=="fuck")
     gamod=1;
     else
     gamod=0;
-    game();
+    cccc="Y";
+    while(cccc=="Y"||cccc=="Yes"||cccc=="fuck")
+    {
+    	slinit();
+	    game();
+	    printf("是否再来一局?(Y/N) \n");
+	    cin>>cccc;	
+	}
     return 0;
 }
