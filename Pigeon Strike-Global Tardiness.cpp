@@ -20,6 +20,7 @@ string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格
 int sh[3][13]={{20,90,11,38,15,17,16,6,8,14,300,5},{38,210,30,70,33,31,35,100,110,34,400,18}};
 int bjl[13]={3,8,8,3,5,5,4,4,2,6,114,514};
 string skl[11]={"","lbw番茄连招","啸着玩","*打鸣*","跑 打","队友鲨手","甩狙","rushhhhhh","细节扔枪","A1高闪","自 鲨"};
+string wpnout[7]={"就这?","还没鲨够怎么就都挂了...","太棒了!我逐渐理解一切","好耶!","So damned boring.","尸体在说话","CALL ME DAD PLZ(×"};
 map<string,int> ranklst;//用来存储一个人在每轮游戏结束后总共鲨掉的人数 
 map<string,int> deadlst;//用来存储在每轮游戏结束后死亡次数 
 map<string,int> killlst;//用来存储每轮结束后每种武器鲨掉的个数 
@@ -760,6 +761,7 @@ void print_data()
 	weaponkill();
 	setcolor(4);
 	printf("目前击杀数最多武器:%s,击杀个数:%d\n",maxkill_weapon.data(),maxkill);
+	printf("%s:%s\n",maxkill_weapon.data(),wpnout[rand()%7].data());
 	setcolor(5);
 }
 
