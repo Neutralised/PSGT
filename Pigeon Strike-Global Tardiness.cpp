@@ -14,6 +14,7 @@ int gamod;
 int roundcntr;
 int maxlen;
 int maxkill;
+int wina,winb;
 string maxkill_weapon;
 //int tatem,tbtem;
 string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格夫","截短霰弹枪","加利尔AR","宙斯电击枪","格洛克17"};
@@ -673,6 +674,8 @@ void weaponkill()
 
 void print_data()
 {
+	setcolor(3);
+	printf("当前Team A/B比分 %d:%d\n",wina,winb);
 	double kd;
 	setcolor(1);
 	printf("----------\nTeam A战绩:\n----------\n");
@@ -838,6 +841,7 @@ void game()
 		if(flag1)
 		{
 			winner=1;
+			winb++;
 			printf("\nTeam B Wins!\n");
 			Sleep(1000);
 			print_data();
@@ -854,6 +858,7 @@ void game()
 			if(flag1)
 			{
 				winner=1;
+				wina++;
 				printf("\nTeam A Wins!\n");
 				Sleep(1000);
 				print_data();
