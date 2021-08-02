@@ -3,17 +3,26 @@
 using namespace std;
 typedef long long ll;
 
-unsigned char sta[10][114],stb[10][114];
-string dea[10],deb[10];
-unsigned char decrypta[10][16],decryptb[10][16];
+unsigned char sta[15][114],stb[15][114];
+string dea[15],deb[15];
+string naa[15],nab[15];
+int lena[15],lenb[15];
+unsigned char decrypta[15][16],decryptb[15][16];
 int choicemem,mem;
-int rd[10];
-int gamod=0;
+int rd[15];
+int gamod;
+int roundcntr;
+int maxlen;
+int maxkill;
+string maxkill_weapon;
 //int tatem,tbtem;
 string mst[12]={"AK-47","AWP","P90","Desert Eagle","M4A4","AUG","SG-553","内格夫","截短霰弹枪","加利尔AR","宙斯电击枪","格洛克17"};
 int sh[3][13]={{20,90,11,38,15,17,16,6,8,14,300,5},{38,210,30,70,33,31,35,100,110,34,400,18}};
 int bjl[13]={3,8,8,3,5,5,4,4,2,6,114,514};
 string skl[11]={"","lbw番茄连招","啸着玩","*打鸣*","跑 打","队友鲨手","甩狙","rushhhhhh","细节扔枪","A1高闪","自 鲨"};
+map<string,int> ranklst;//用来存储一个人在每轮游戏结束后总共鲨掉的人数 
+map<string,int> deadlst;//用来存储在每轮游戏结束后死亡次数 
+map<string,int> killlst;//用来存储每轮结束后每种武器鲨掉的个数 
 
 struct chara
 {
@@ -25,7 +34,8 @@ struct chara
 	int weapon=11;//当前武器 
 	bool shm;//是否失明 
 	int kill;//击杀数 
-	int extra;//额外伤害 
+	int extra;//额外伤害
+	string rank;//结算时显示的称号 
 }teama[10],teamb[10];
 
 void md5ed()
@@ -46,7 +56,7 @@ void md5ed()
 	}
 }
 
-void file_trans()
+void file_trans_for_md5()
 {
 	int i;
 	freopen("temp.txt","w",stdout);
@@ -77,9 +87,37 @@ void file_trans()
 //	cout<<deb[1];
 }//这个没写锅 
 
+void file_trans_for_name()
+{
+	freopen("temp2.txt","w",stdout);
+	for(int j=1;j<=mem;j++)
+	printf("%s\n",sta[j]);
+	for(int j=1;j<=mem;j++)
+	printf("%s\n",stb[j]);
+	freopen("CON","w",stdout);
+	freopen("temp2.txt","r",stdin);
+	for(int j=1;j<=mem;j++)
+	{
+		cin>>naa[j];
+		lena[j]=naa[j].length();
+		if(lena[j]>maxlen)
+		maxlen=lena[j];	
+	}
+	for(int j=1;j<=mem;j++)
+	{
+		cin>>nab[j];	
+		lenb[j]=nab[j].length();
+		if(lenb[j]>maxlen)
+		maxlen=lenb[j];	
+	}
+	freopen("CON","r",stdin);
+//	cout<<naa[1]<<endl;
+//	cout<<nab[1]<<endl;
+}
+
 void attribute()
 {
-	file_trans();
+	file_trans_for_md5();
 	for(int i=1;i<=mem;i++) 
     {
 		//Team A 进行md5分配属性 
@@ -161,7 +199,7 @@ void debug_2()
 {
 	setcolor(8);
 	cout<<"Team A:\n";
-	setcolor(3);
+	setcolor(2);
     for(int j=1;j<=mem;j++)
     {
    		printf("-----------------------\n第%d个成员\n名称:%s\n精准:%d\nhp:%d\n专精:%s\n",j,sta[j],teama[j].acc,teama[j].hp,mst[teama[j].mas].data());
@@ -171,7 +209,7 @@ void debug_2()
 	}
 	setcolor(8);
 	cout<<"Team B:\n";
-	setcolor(3);
+	setcolor(2);
     for(int j=1;j<=mem;j++)
     {
    		printf("-----------------------\n第%d个成员\n名称:%s\n精准:%d\nhp:%d\n专精:%s\n",j,stb[j],teamb[j].acc,teama[j].hp,mst[teamb[j].mas].data());
@@ -195,11 +233,12 @@ void strout()
 	mem=choicemem*2-1;
 	cout<<"请输入A队名称(用空格或换行隔开):\n";
 	for(int i=1;i<=mem;i++)
-	cin>>sta[i];
+		cin>>sta[i];
 	cout<<"请输入B队名称(用空格或换行隔开):\n";
 	for(int i=1;i<=mem;i++)
-	cin>>stb[i];
+		cin>>stb[i];
 	const int NUM=mem*2;//任务完成总量 然而我显示加载条之前就弄完了((( 
+	file_trans_for_name();
 	md5ed();
 	for (int i=0;i<=NUM;i++)
 	{
@@ -213,6 +252,53 @@ void strout()
 	printf("\nTransformation Completed.\n");
 	setcolor(5);
 	printf("Game starting...\n");
+}
+
+void deadout(chara a,int count,bool team)
+{
+	switch(a.kill)
+	{
+		case 2:
+			setcolor(2);
+			printf("%s已经带走了2人!\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 3:
+			setcolor(1);
+			printf("%s鲨疯了!淦翻了3个人!\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 4:
+			setcolor(4);
+			printf("%s如同天上降魔猪,真是人间野猪神!4个人已经倒在他脚下!\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 5:
+			setcolor(6);
+			printf("王牌!%s鲨掉了5人!\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 6:
+			setcolor(6);
+			printf("%s还在鲨戮!6人已死!\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 7:
+			setcolor(6);
+			printf("这不可能...%s是吃了炫迈吗根本停不下来...\n7个人头入账!",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 8:
+			setcolor(6);
+			printf("第8个......怎么还是%s?!这b开挂了吧......\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		case 9:
+			setcolor(1);
+			printf("%s消灭了整支敌方队伍......\n",team?stb[count]:sta[count]);
+			setcolor(5);
+			break;
+		}
 }
 
 void use_skill(chara &a,bool team,int count)//count:第几个成员 team:属于哪个队伍 
@@ -273,10 +359,10 @@ void use_skill(chara &a,bool team,int count)//count:第几个成员 team:属于�
 		rdmsh/=3;
 	if(a.skill==6)
 		rdmsh*=2;
-	rdmsh+=a.extra;
-	a.extra=0;
 	if(a.skill==2||a.skill==4||a.skill==5||a.skill==6||a.skill==7)
 	{
+		rdmsh+=a.extra;
+		a.extra=0;
 		if(team)
 		{
 			if(a.skill==5)
@@ -359,9 +445,10 @@ void use_skill(chara &a,bool team,int count)//count:第几个成员 team:属于�
 		case 10:
 			printf("以迅雷不及掩耳盗铃儿响叮当仁不让世界充满爱在西元前仆后继无人间失格物致知之为知之不知为不知是智障也的势头掏出一把小刀割开了自己的喉咙!\n");
 			setcolor(1);
-			printf("%s杀死了自己\n",team?stb[count]:sta[count]);
+			printf("%s杀死了自己!\n",team?stb[count]:sta[count]);
 			setcolor(5);
 			a.hp=0; 
+			a.kill--;
 			break;
 	}
 	if(a.skill!=10)
@@ -372,20 +459,24 @@ void use_skill(chara &a,bool team,int count)//count:第几个成员 team:属于�
 			{
 				if(teama[rdmst].hp==0)
 				{
+					killlst[mst[a.weapon]]++;
 					a.kill++;
 					setcolor(4);
 					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 					setcolor(5);
+					deadout(a,count,team);
 				}	
 			}
 			else
 			{
 				if(teamb[rdmst].hp==0)
 				{
+					killlst[mst[a.weapon]]++;
 					a.kill++;
 					setcolor(4);
 					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?stb[rdmst]:sta[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 					setcolor(5);
+					deadout(a,count,team);
 				}	
 			}	
 		}
@@ -395,20 +486,24 @@ void use_skill(chara &a,bool team,int count)//count:第几个成员 team:属于�
 			{
 				if(teamb[rdmst].hp==0)
 				{
+					killlst[mst[a.weapon]]++;
 					a.kill++;
 					setcolor(4);
 					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 					setcolor(5);
+					deadout(a,count,team);
 				}	
 			}
 			else
 			{
 				if(teama[rdmst].hp==0)
 				{
+					killlst[mst[a.weapon]]++;
 					a.kill++;
 					setcolor(4);
 					printf("-------------------------\n%s被%s使用%s杀死了.\n",team?stb[rdmst]:sta[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 					setcolor(5);
+					deadout(a,count,team);
 				}	
 			}	
 		}	
@@ -448,10 +543,10 @@ void actt(chara &a,bool team,int count,int rdmac)
 		rdmsh*=2;
 	if(a.weapon==a.mas)
 	    rdmsh=rdmsh*2;
-	rdmsh+=a.extra;
-	a.extra=0;
 	if(rdmac==3||rdmac==4||(rdmac==2&&a.pos==3))
 	{
+		rdmsh+=a.extra;
+		a.extra=0;
 		if(team)
 		{
 			teama[rdmst].hp-=rdmsh;
@@ -503,7 +598,7 @@ void actt(chara &a,bool team,int count,int rdmac)
 			break;
 		case 5:
 			while(tempw==a.weapon)
-			a.weapon=rand()%12;
+			a.weapon=rand()%11;
 			setcolor(4);
 			printf("-------------------------\n%s起了把%s,扔掉了手中的%s\n",team?stb[count]:sta[count],mst[a.weapon].data(),mst[tempw].data());
 			setcolor(5);
@@ -516,124 +611,156 @@ void actt(chara &a,bool team,int count,int rdmac)
 	{
 		if(teama[rdmst].hp==0)
 		{
+			killlst[mst[a.weapon]]++;
 			a.kill++;
 			setcolor(4);
 			printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 			setcolor(5);
 		}
-		switch(a.kill)
-			{
-				case 2:
-					setcolor(2);
-					printf("%s已经带走了2人!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 3:
-					setcolor(1);
-					printf("%s鲨疯了!淦翻了3个人!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 4:
-					setcolor(4);
-					printf("%s如同天上降魔猪,真是世间野猪神!4个人已经倒在他脚下!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 5:
-					setcolor(6);
-					printf("王牌!%s鲨掉了5人!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 6:
-					setcolor(6);
-					printf("%s还在鲨戮!6人已死!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 7:
-					setcolor(6);
-					printf("这不可能...%s是吃了炫迈吗根本停不下来...\n7个人头入账!",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 8:
-					setcolor(6);
-					printf("第8个......怎么还是%s?!这b开挂了吧......\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 9:
-					setcolor(1);
-					printf("%s消灭了整支敌方队伍......\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-			}	
+		deadout(a,count,team);
 	}
 	else
 	{
 		if(teamb[rdmst].hp==0)
 		{
+			killlst[mst[a.weapon]]++;
 			a.kill++;
 			setcolor(4);
 			printf("-------------------------\n%s被%s使用%s杀死了.\n",team?sta[rdmst]:stb[rdmst],team?stb[count]:sta[count],mst[a.weapon].data());
 			setcolor(5);
-			switch(a.kill)
-			{
-				case 2:
-					setcolor(2);
-					printf("%s已经带走了2人!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 3:
-					setcolor(2);
-					printf("%s鲨疯了!淦翻了3个人!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 4:
-					setcolor(2);
-					printf("%s如同天上降魔猪,真是世间野猪神!4个人已经倒在他脚下!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 5:
-					setcolor(6);
-					printf("王牌!%s鲨掉了5人!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 6:
-					setcolor(6);
-					printf("%s还在鲨戮!6人已死!\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 7:
-					setcolor(6);
-					printf("这不可能...%s是吃了炫迈吗根本停不下来...\n7个人头入账!",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 8:
-					setcolor(6);
-					printf("第8个......怎么还是%s?!这b开挂了吧......\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-				case 9:
-					setcolor(1);
-					printf("%s消灭了整支敌方队伍......\n",team?stb[count]:sta[count]);
-					setcolor(5);
-					break;
-			}
+			deadout(a,count,team);
 		}	
 	}
 }
 
 bool winner;
 
+//void mapinit()
+//{
+//	freopen("mapdata.txt","r",stdin);
+//	string nameee;
+//	int killl;
+//	while(scanf("%s%d",&nameee,&killl)!=EOF)
+//		ranklst[nameee]=killl;
+//	freopen("CON","r",stdin);
+//	printf("%s %d\n",nameee.data(),ranklst[nameee]);
+//}
+
+//void mapsave()
+//{
+//	freopen("mapdata.txt","w",stdout);
+//	for(register int i=1;i<=mem;i++)
+//	cout<<sta[i]<<" "<<ranklst[naa[i]]<<endl;
+//	for(register int i=1;i<=mem;i++)
+//	cout<<stb[i]<<" "<<ranklst[nab[i]]<<endl;
+//	freopen("CON","w",stdout);
+//}
+
+//写锅了 别问 问就是我太拉了 
+
+void weaponkill()
+{
+	for(register int i=1;i<=11;i++)
+	{
+		if(killlst[mst[i]]>maxkill)
+		{
+			maxkill=killlst[mst[i]];
+			maxkill_weapon=mst[i];
+		}	
+	}
+}
+
 void print_data()
 {
+	double kd;
 	setcolor(1);
 	printf("----------\nTeam A战绩:\n----------\n");
+	setcolor(7);
+	printf("After %d rounds.\n",roundcntr);
 	setcolor(5);
 	for(register int i=1;i<=mem;i++)
-	printf("%s killed:%d\n",sta[i],teama[i].kill);
+	{
+		if(teama[i].hp==0)
+		deadlst[naa[i]]++;
+		ranklst[naa[i]]+=teama[i].kill;
+		kd=(double)(ranklst[naa[i]]-deadlst[naa[i]])/roundcntr;
+		teama[i].rank="重在参与";
+		if(kd>=1.5)
+		teama[i].rank="K/D 爆表"; 
+		if(ranklst[naa[i]]>=15||teama[i].kill>=4)
+		teama[i].rank="鲨人狂魔"; 
+		if(teama[i].kill==0)
+		teama[i].rank="摸鱼带师";
+		if(deadlst[naa[i]]>=10)
+		teama[i].rank="提 款 姬";
+		if(deadlst[naa[i]]>=20)
+		teama[i].rank="敌方卧底";
+		if(teama[i].kill==mem)
+		teama[i].rank="灭队大佬";
+		if(teama[i].rank=="灭队大佬"||teama[i].rank=="K/D 爆表"||teama[i].rank=="鲨人狂魔")
+		setcolor(6);
+		else if(teama[i].rank=="提 款 姬"||teama[i].rank=="敌方卧底") 
+		setcolor(7);
+		else if(teama[i].rank=="摸鱼带师")
+		setcolor(2);
+		printf("%s",teama[i].rank.data());
+		setcolor(4);
+		printf("  ");
+		int nope=(maxlen-lena[i])/2;
+		for(register int j=1;j<=nope;j++)
+		printf(" ");
+		printf("%s",sta[i]);
+		for(register int j=1;j<=(maxlen-lena[i]-nope);j++)
+		printf(" ");
+		setcolor(5);
+		printf(" [k]:%d,[Tk]: %d ,[Td]: %d ,[Ave(K/D)]: %.02lf\n",teama[i].kill,ranklst[naa[i]],deadlst[naa[i]],kd);	
+	}
 	setcolor(2);
 	printf("----------\nTeam B战绩:\n----------\n");
+	setcolor(7);
+	printf("After %d rounds.\n",roundcntr);
 	setcolor(5);
 	for(register int i=1;i<=mem;i++)
-	printf("%s killed:%d\n",stb[i],teamb[i].kill);
+	{
+		if(teamb[i].hp==0)
+		deadlst[nab[i]]++;
+		ranklst[nab[i]]+=teamb[i].kill;
+		kd=(double)(ranklst[nab[i]]-deadlst[nab[i]])/roundcntr;
+		teamb[i].rank="重在参与";
+		if(kd>=1.5)
+		teamb[i].rank="K/D 爆表";
+		if(ranklst[nab[i]]>=15||teamb[i].kill>=4)
+		teamb[i].rank="鲨人狂魔"; 
+		if(teamb[i].kill==0)
+		teamb[i].rank="摸鱼带师";
+		if(deadlst[nab[i]]>=10)
+		teamb[i].rank="提 款 姬";
+		if(deadlst[nab[i]]>=20)
+		teamb[i].rank="敌方卧底";
+		if(teamb[i].kill==mem)
+		teamb[i].rank="灭队大佬";
+		if(teamb[i].rank=="灭队大佬"||teamb[i].rank=="K/D 爆表"||teamb[i].rank=="鲨人狂魔")
+		setcolor(8);
+		else if(teamb[i].rank=="提 款 姬"||teamb[i].rank=="敌方卧底") 
+		setcolor(7);
+		else if(teamb[i].rank=="摸鱼带师")
+		setcolor(2);
+		printf("%s",teamb[i].rank.data());
+		setcolor(4);
+		printf("  ");
+		int nope=(maxlen-lenb[i])/2;
+		for(register int j=1;j<=nope;j++)
+		printf(" ");
+		printf("%s",stb[i]);
+		for(register int j=1;j<=(maxlen-lenb[i]-nope);j++)
+		printf(" ");
+		setcolor(5);
+		printf(" [k]:%d,[Tk]: %d ,[Td]: %d ,[Ave(K/D)]: %.02lf\n",teamb[i].kill,ranklst[nab[i]],deadlst[nab[i]],kd);
+	}
+	weaponkill();
+	setcolor(4);
+	printf("目前击杀数最多武器:%s,击杀个数:%d\n",maxkill_weapon.data(),maxkill);
+	setcolor(5);
 }
 
 void slinit()
@@ -643,6 +770,7 @@ void slinit()
 		teamb[i].hp=teama[i].hp=200;
 		teama[i].kill=teamb[i].kill=0;
 		teama[i].weapon=teamb[i].weapon=11;	
+		teama[i].shm=teamb[i].shm=0;
 	}
 }
 
@@ -742,26 +870,48 @@ int main()
     strout();
     //debug_1();//输出md5码 
     attribute();
-    debug_2();
-    printf("(请检阅您的部队,完毕后输入yes.)\n");
-    string fuck="";
-    cin>>fuck;
+    setcolor(4);
+    printf("\n您是否想要检阅部队?(Y/N)\n");
+    setcolor(5);
+    string chooo;
+    cin>>chooo;
+    if(chooo=="y"||chooo=="Y"||chooo=="fuck")
+    {
+	    debug_2();
+	    printf("(请检阅您的部队,完毕后输入yes.)\n");
+	    string fuck="";
+	    cin>>fuck;	
+	}
     setcolor(4);
     printf("您是否想打开快速战斗模式?(Y/N)\n");
     setcolor(5);
     string cccc;
     cin>>cccc;
-    if(cccc=="Y"||cccc=="Yes"||cccc=="fuck")
+    if(cccc=="Y"||cccc=="y"||cccc=="fuck")
     gamod=1;
     else
     gamod=0;
     cccc="Y";
-    while(cccc=="Y"||cccc=="Yes"||cccc=="fuck")
+    while(cccc=="Y"||cccc=="y"||cccc=="fuck")
     {
+    	roundcntr++;
     	slinit();
+    	//mapinit();
 	    game();
-	    printf("是否再来一局?(Y/N) \n");
+	    //mapsave();
+	    printf("\n是否再来一局?(Y/N) \n");
 	    cin>>cccc;	
+	    if(cccc!="Y"&&cccc!="y"&&cccc!="fuck")
+	    break;
+	    setcolor(4);
+	    printf("您是否想打开快速战斗模式?(Y/N)\n");
+	    setcolor(5);
+	    string fuccccc;
+	    cin>>fuccccc;
+	    if(fuccccc=="Y"||fuccccc=="y"||fuccccc=="fuck")
+	    gamod=1;
+	    else
+	    gamod=0;
 	}
     return 0;
 }
